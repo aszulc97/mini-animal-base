@@ -1,7 +1,7 @@
 //import logo from "./logo.svg";
 import animalsArray from "./animals.json";
 import "./App.css";
-import Button from "./Button";
+import FilterButton from "./FilterButton";
 import TableRow from "./TableRow";
 import { useState } from "react";
 
@@ -9,30 +9,33 @@ function App() {
   const newArray = animalsArray.map((animal) => [...animal.fullname.split(" "), animal.age]);
   let objArray = [];
   newArray.forEach((array) => {
-    const animalObj = { name: "", description: "", type: "", age: 0 };
+    const animalObj = { id: Math.random(), name: "", description: "", type: "", age: 0 };
     [animalObj.name, , animalObj.description, animalObj.type, animalObj.age] = array;
     objArray = [...objArray, animalObj];
   });
 
+  const [allAnimals, setAllAnimals] = useState(objArray);
   const [type, setType] = useState("all");
-
-  //let filteredArray = objArray;
-
   const [filteredArray, setFilteredArray] = useState(objArray);
 
   function filterType(type) {
     setType(type);
-    setFilteredArray(objArray.filter((animal) => animal.type === type));
+    setFilteredArray(allAnimals.filter((animal) => animal.type === type));
     if (type === "all") {
-      setFilteredArray(objArray);
+      setFilteredArray(allAnimals);
     }
-    console.log(filteredArray);
   }
+
+  function deleteAnimal(id) {
+    setAllAnimals((oldState) => oldState.filter((animal) => animal.id !== id));
+    filterType(type);
+  }
+
   return (
     <div className="App">
-      <Button text="Cat" filterType={filterType} />
-      <Button text="Dog" filterType={filterType} />
-      <Button text="All" filterType={filterType} />
+      <FilterButton text="Cat" filterType={filterType} />
+      <FilterButton text="Dog" filterType={filterType} />
+      <FilterButton text="All" filterType={filterType} />
       <table>
         <thead>
           <tr>
@@ -44,7 +47,7 @@ function App() {
         </thead>
         <tbody>
           {filteredArray.map((animal) => (
-            <TableRow {...animal}></TableRow>
+            <TableRow {...animal} delete={deleteAnimal}></TableRow>
           ))}
         </tbody>
       </table>
