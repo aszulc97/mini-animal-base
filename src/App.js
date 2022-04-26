@@ -6,13 +6,19 @@ import TableRow from "./TableRow";
 import { useState } from "react";
 
 function App() {
-  const newArray = animalsArray.map((animal) => [...animal.fullname.split(" "), animal.age]);
-  let objArray = [];
-  newArray.forEach((array) => {
-    const animalObj = { id: Math.random(), name: "", description: "", type: "", age: 0 };
-    [animalObj.name, , animalObj.description, animalObj.type, animalObj.age] = array;
-    objArray = [...objArray, animalObj];
-  });
+  function prepare(data) {
+    return data.map((animal) => {
+      const [name, , description, type] = animal.fullname.split(" ");
+      return {
+        name,
+        description,
+        type,
+        age: animal.age,
+      };
+    });
+  }
+
+  const objArray = prepare(animalsArray);
 
   const [allAnimals, setAllAnimals] = useState(objArray);
   const [type, setType] = useState("all");
